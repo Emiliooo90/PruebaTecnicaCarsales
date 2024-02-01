@@ -1,39 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RickandmortyService } from '../core/services/rickandmorty.service';
 import {EpisodeslistComponent } from '../episodeslist/episodeslist.component';
+import { Observable, Subject, switchMap, debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { Character } from '../interfaces/episode';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, EpisodeslistComponent],
+  imports: [CommonModule, EpisodeslistComponent],
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent implements OnInit {
-  form: FormGroup;
-  searchResults: any;
+export class SearchComponent {
+  searchTerm$ = new Subject<string>();
+  characters$!: Observable<Character[]>;
+  private filterSvc = inject(RickandmortyService);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private rickandmortyService: RickandmortyService
-  ) {
-    this.form = this.formBuilder.group({
-      searchTerm: ''
-    });
+  constructor() {
+    this.characters$ = this.searchTerm$.pipe(
+      filter((term: string) => term.length >= 3),
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap((term: string) => this.filterSvc.filterCharacter(term))
+    );
   }
 
-  ngOnInit() {
-  }
-
-  search(): void {
-    if (this.form.value.searchTerm) {
-      this.rickandmortyService.searchEpisode(this.form.value['searchTerm']).subscribe(results => {
-        this.searchResults = results;
-      }, error => {
-        console.error(error);
-      })
-    }
+  search(event: Event): void {
+    const element = event.currentTarget as HTMLInputElement;
+    this.searchTerm$.next(element.value);
   }
 }
