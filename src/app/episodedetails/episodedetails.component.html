@@ -1,0 +1,23 @@
+<ng-container *ngIf="(episode$ | async) as episode">
+    <div class="mt-4">
+        <h1 class="text-2xl font-bold mb-4 text-center">Detalles del Episodio</h1>
+        <div class="flex justify-center">
+            <div>
+                <div class="bg-white rounded-lg overflow-hidden shadow-md p-4 mx-auto">
+                    <h2><strong>Nombre del episodio: </strong>{{ episode.name }}</h2>
+                    <p><strong>Fecha de emisión:</strong> {{ episode.air_date }}</p>
+                    <!--<p><strong>Temporada:</strong> {{ episode.season }}</p>-->
+                    <p><strong>Episodio:</strong> {{ episode.episode }}</p>
+                    <p><strong>Personajes:</strong></p>
+                    <ul>
+                        <li *ngFor="let character of episode.characters">{{ character }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="errorMessage">
+    <app-errormessage [errorMessage]="errorMessage" />
+</ng-container>
