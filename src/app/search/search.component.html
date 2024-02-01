@@ -1,3 +1,13 @@
-<div>
-    
+<form [formGroup]="form" (ngSubmit)="search()" class="text-center pt-8">
+    <input formControlName="searchTerm" class="border p-2 rounded" placeholder="Buscar episodios...">
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Buscar
+    </button>
+</form>
+
+<div *ngIf="searchResults">
+    <div *ngFor="let result of searchResults.results">
+        <!-- Aquí puedes usar tu componente de tarjeta para mostrar cada resultado. -->
+        <app-episodeslist [episodeInfo]="result" />
+    </div>
 </div>

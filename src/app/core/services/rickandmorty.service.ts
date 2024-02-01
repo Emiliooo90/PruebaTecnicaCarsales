@@ -11,8 +11,8 @@ export class RickandmortyService {
 
   constructor(private http: HttpClient) { }
 
-  getEpisodesList(): Observable<EpisodeResults> {
-    return this.http.get<EpisodeResults>(`${environment.apiUrlBase}/episode`);
+  getEpisodesList(page: number = 1): Observable<EpisodeResults> {
+    return this.http.get<EpisodeResults>(`${environment.apiUrlBase}/episode?page=${page}`);
   }
 
   getEpisodeById(id: number): Observable<Episode> {
